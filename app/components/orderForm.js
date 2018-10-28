@@ -1,52 +1,43 @@
-import React, { Component } from 'react';
-import { OrderConsumer } from '../contexts/orders.context';
+import React, { Component, useState, useContext } from 'react';
+import { OrderContext } from '../contexts/orders.context';
 
-export class OrderForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      purchase: null,
-    };
+export function OrderForm(props) {
+  const name = useFormComponent('');
+  const purchase = useFormComponent('');
+  const ctx = useContext(OrderContext);
 
-    this.update = this.update.bind(this);
-    this.submit = this.submit.bind(this);
-  }
+  const submit = evt => {
+    evt.preventDefault();
+    ctx.createOrder({
+      name: name.value,
+      purchase: purchase.value,
+    });
+  };
 
-  update(key) {
-    return evt => this.setState({ [key]: evt.target.value });
-  }
+  return (
+    <div>
+      <h2>Place your order</h2>
+      <form onSubmit={submit}>
+        <input type="text" {...name} name="name" placeholder="name" />
+        <select {...purchase} name="item">
+          <option value="" />
+          {ctx.catalogue.length > 0 &&
+            ctx.catalogue.map(item => (
+              <option key={item.id} value={item.id}>
+                {item.description} - ${item.price}
+              </option>
+            ))}
+        </select>
+        <button type="submit">place your order!</button>
+      </form>
+    </div>
+  );
+}
 
-  submit(ctx) {
-    return evt => {
-      evt.preventDefault();
-      ctx.createOrder(this.state);
-    };
-  }
-
-  render() {
-    return (
-      <div>
-        <h2>Place your order</h2>
-
-        <OrderConsumer>
-          {ctx => (
-            <form onSubmit={this.submit(ctx)}>
-              <input type="text" onChange={this.update('name')} name="name" placeholder="name" />
-              <select onChange={this.update('purchase')} name="item">
-                <option />
-                {ctx.catalogue.length > 0 &&
-                  ctx.catalogue.map(item => (
-                    <option key={item.id} value={item.id}>
-                      {item.description} - ${item.price}
-                    </option>
-                  ))}
-              </select>
-              <button type="submit">place your order!</button>
-            </form>
-          )}
-        </OrderConsumer>
-      </div>
-    );
-  }
+function useFormComponent(initialValue) {
+  const [value, setValue] = useState(initialValue);
+  return {
+    value,
+    onChange: evt => setValue(evt.target.value),
+  };
 }

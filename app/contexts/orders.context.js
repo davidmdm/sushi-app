@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const OrderContext = React.createContext(null);
+export const OrderContext = React.createContext(null);
 
 const by = key => (a, b) => (a[key] < b[key] ? -1 : 1);
 
