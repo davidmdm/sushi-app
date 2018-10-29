@@ -1,6 +1,4 @@
-import React, { Component } from 'react';
-
-export const OrderContext = React.createContext(null);
+import React, { useReducer, useEffect } from 'react';
 
 const by = key => (a, b) => (a[key] < b[key] ? -1 : 1);
 
@@ -9,57 +7,85 @@ const arrayToMapBy = key => (acc, value) => {
   return acc;
 };
 
-export class OrderProvider extends Component {
-  constructor(props) {
-    super(props);
+export const OrderContext = React.createContext(null);
 
-    this.state = {
+export function OrderProvider(props) {
+  const [state, dispatch] = useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case 'SET_CATALOGUE':
+          return {
+            ...state,
+            catalogue: action.catalogue,
+            itemsById: action.catalogue.reduce(arrayToMapBy('id'), {}),
+          };
+        case 'SET_ORDERS':
+          return {
+            ...state,
+            orders: action.orders,
+          };
+        case 'SET_ERROR':
+          return {
+            ...state,
+            error: action.error.message,
+          };
+      }
+    },
+    {
       orders: [],
       catalogue: [],
       itemsById: {},
-      fetchOrders: this.fetchOrders.bind(this),
-      createOrder: this.createOrder.bind(this),
       error: '',
-    };
-  }
+    }
+  );
 
-  componentDidMount() {
-    this.fetchOrders();
-    this.fetchCatalogue();
-  }
-
-  fetchOrders() {
+  const fetchOrders = () => {
     fetch('/orders')
       .then(res => res.json())
-      .then(orders => this.setState({ orders: orders.sort(by('name')) }))
-      .catch(console.error);
-  }
+      .then(orders => dispatch({ type: 'SET_ORDERS', orders: orders.sort(by('name')) }))
+      .catch(err => dispatch({ type: 'SET_ERROR', error: err }));
+  };
 
-  fetchCatalogue() {
-    fetch('/catalogue')
-      .then(res => res.json())
-      .then(catalogue =>
-        this.setState({
-          catalogue,
-          itemsById: catalogue.reduce(arrayToMapBy('id'), {}),
-        })
-      )
-      .catch(console.error);
-  }
-
-  createOrder(order) {
+  const createOrder = order => {
     fetch('/orders', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(order),
     })
-      .then(() => this.fetchOrders())
-      .catch(console.error);
-  }
+      .then(res => !res.ok && res.text().then(txt => Promise.reject(new Error(txt))))
+      .then(() => fetchOrders())
+      .catch(err => dispatch({ type: 'SET_ERROR', error: err }));
+  };
 
-  render() {
-    return <OrderContext.Provider value={this.state}>{this.props.children}</OrderContext.Provider>;
-  }
+  const fetchCatalogue = () => {
+    fetch('/catalogue')
+      .then(res => res.json())
+      .then(res => !res.ok && res.text().then(txt => Promise.reject(new Error(txt))))
+      .then(catalogue =>
+        dispatch({
+          type: 'SET_CATALOGUE',
+          catalogue,
+          itemsById: catalogue.reduce(arrayToMapBy('id'), {}),
+        })
+      )
+      .catch(err => dispatch({ type: 'SET_ERROR', error: err }));
+  };
+
+  useEffect(() => {
+    fetchCatalogue();
+    fetchOrders();
+  }, []);
+
+  return (
+    <OrderContext.Provider
+      value={{
+        state,
+        fetchCatalogue,
+        fetchOrders,
+        createOrder,
+      }}
+    >
+      {props.children}
+    </OrderContext.Provider>
+  );
 }
-
-export const OrderConsumer = OrderContext.Consumer;

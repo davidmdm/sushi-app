@@ -8,10 +8,7 @@ export function OrderForm(props) {
 
   const submit = evt => {
     evt.preventDefault();
-    ctx.createOrder({
-      name: name.value,
-      purchase: purchase.value,
-    });
+    ctx.createOrder({ name: name.value, purchase: purchase.value });
   };
 
   return (
@@ -21,8 +18,8 @@ export function OrderForm(props) {
         <input type="text" {...name} name="name" placeholder="name" />
         <select {...purchase} name="item">
           <option value="" />
-          {ctx.catalogue.length > 0 &&
-            ctx.catalogue.map(item => (
+          {ctx.state.catalogue.length > 0 &&
+            ctx.state.catalogue.map(item => (
               <option key={item.id} value={item.id}>
                 {item.description} - ${item.price}
               </option>
@@ -30,6 +27,7 @@ export function OrderForm(props) {
         </select>
         <button type="submit">place your order!</button>
       </form>
+      {ctx.state.error && <div style={{ color: 'red' }}>{ctx.state.error}</div>}
     </div>
   );
 }
