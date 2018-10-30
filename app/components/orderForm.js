@@ -1,7 +1,7 @@
-import React, { Component, useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { OrderContext } from '../contexts/orders.context';
 
-export function OrderForm(props) {
+export function OrderForm() {
   const name = useFormComponent('');
   const purchase = useFormComponent('');
   const ctx = useContext(OrderContext);
