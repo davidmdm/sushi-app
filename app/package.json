@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "assets": "^3.0.0",
     "react": "^16.7.0-alpha.0",
     "react-dom": "^16.7.0-alpha.0"
   },
@@ -19,6 +20,7 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "parcel-bundler": "^1.10.3"
+    "parcel-bundler": "^1.10.3",
+    "sass": "^1.14.3"
   }
 }
