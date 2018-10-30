@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
 	"github.com/davidmdm/sushi-app/datastore"
-	"strings"
 )
 
 func main() {
@@ -30,7 +30,7 @@ func serveFile(w http.ResponseWriter, filename string) {
 }
 
 func serveApp(w http.ResponseWriter, r *http.Request) {
-	if strings.HasPrefix(r.URL.Path, "/app.") {
+	if r.URL.Path != "/" {
 		serveFile(w, r.URL.Path[1:])
 		return
 	}
