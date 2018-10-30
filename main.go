@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"playground/webserver/datastore"
+	"github.com/davidmdm/sushi-app/datastore"
 	"strings"
 )
 
