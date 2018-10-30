@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 
 const by = key => (a, b) => (a[key] < b[key] ? -1 : 1);
 
@@ -47,11 +47,13 @@ export function OrderProvider(props) {
   };
 
   const createOrder = order => {
-    fetch('/orders', {
+    const options = {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(order),
-    })
+    };
+
+    fetch('/orders', options)
       .then(res => !res.ok && res.text().then(txt => Promise.reject(new Error(txt))))
       .then(() => fetchOrders())
       .catch(err => dispatch({ type: 'SET_ERROR', error: err }));
@@ -76,15 +78,15 @@ export function OrderProvider(props) {
     fetchOrders();
   }, []);
 
+  const value = {
+    state,
+    fetchCatalogue,
+    fetchOrders,
+    createOrder,
+  };
+
   return (
-    <OrderContext.Provider
-      value={{
-        state,
-        fetchCatalogue,
-        fetchOrders,
-        createOrder,
-      }}
-    >
+    <OrderContext.Provider value={value}>
       {props.children}
     </OrderContext.Provider>
   );
