@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { Application } from './Application';
 import { Header } from './components/header';
 import { OrderForm } from './components/orderForm';
 import { OrderList } from './components/orderList';

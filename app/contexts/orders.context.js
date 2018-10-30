@@ -62,7 +62,6 @@ export function OrderProvider(props) {
   const fetchCatalogue = () => {
     fetch('/catalogue')
       .then(res => res.json())
-      .then(res => !res.ok && res.text().then(txt => Promise.reject(new Error(txt))))
       .then(catalogue =>
         dispatch({
           type: 'SET_CATALOGUE',
@@ -85,9 +84,5 @@ export function OrderProvider(props) {
     createOrder,
   };
 
-  return (
-    <OrderContext.Provider value={value}>
-      {props.children}
-    </OrderContext.Provider>
-  );
+  return <OrderContext.Provider value={value}>{props.children}</OrderContext.Provider>;
 }
