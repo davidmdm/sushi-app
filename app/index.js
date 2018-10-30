@@ -9,14 +9,16 @@ import './index.scss';
 const video = require('./assets/sushi-video.mp4');
 
 export const Application = () => (
-  <div id='application'>
-  <video autoPlay muted loop src={video} type="video/mp4" />
+  <div id="application">
+    <video autoPlay loop src={video} type="video/mp4" />
 
     <Header />
-    <OrderProvider>
-      <OrderForm />
-      <OrderList />
-    </OrderProvider>
+    <div id="order-panel">
+      <OrderProvider>
+        <OrderForm />
+        <OrderList />
+      </OrderProvider>
+    </div>
   </div>
 );
 

@@ -1,7 +1,3 @@
 import React from 'react';
 
-export const Header = () => (
-  <div>
-    <h1>Sushi App</h1>
-  </div>
-);
+export const Header = () => <h1>Sushi App</h1>;
