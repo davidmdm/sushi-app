@@ -7,7 +7,7 @@ import './index.scss';
 
 export const Application = () => (
   <div id="application">
-    <video autoPlay loop src={'/sushi-video.mp4'} type="video/mp4" />
+    <video autoPlay loop src="/sushi-video.mp4" type="video/mp4" />
 
     <div id="order-panel">
       <OrderProvider>
