@@ -2,13 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/davidmdm/sushi-app/datastore"
 )
+
+const fileRoot = "./app/assets"
 
 func main() {
 
@@ -19,22 +20,12 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 
-func serveFile(w http.ResponseWriter, filename string) {
-	f, err := os.Open("./app/dist/" + filename)
-	if err != nil {
-		http.Error(w, "something went wrong", http.StatusInternalServerError)
-		return
-	}
-	defer f.Close()
-	io.Copy(w, f)
-}
-
 func serveApp(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		serveFile(w, r.URL.Path[1:])
+	if _, err := os.Stat(fileRoot + r.URL.Path); os.IsNotExist(err) {
+		http.ServeFile(w, r, fileRoot+"/index.html")
 		return
 	}
-	serveFile(w, "index.html")
+	http.ServeFile(w, r, fileRoot+r.URL.Path)
 }
 
 func serveCatalgue(w http.ResponseWriter, r *http.Request) {
