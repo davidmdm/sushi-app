@@ -1,3 +1,5 @@
 **/dist
 **/node_modules
+**/assets/app.*
+**/assets/index.html*
 **/.cache
