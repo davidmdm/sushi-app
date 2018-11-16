@@ -52,10 +52,12 @@ func (orders *Orders) Remove(name string) {
 	}
 }
 
-var Catalogue = []item{
-	{Id: "1", Price: 16.99, Description: "20 pieces"},
-	{Id: "2", Price: 13.99, Description: "16 pieces"},
-	{Id: "3", Price: 9.99, Description: "12 pieces"},
+var Catalog = []item{
+	{Id: "A", Price: 5.95, Description: "11 mcx / 5 Futomakis - 6 Hosomakis"},
+	{Id: "B", Price: 7.95, Description: "12 mcx / 6 Futomakis - 6 Hosomakis"},
+	{Id: "C", Price: 9.95, Description: "14 mcx / 6 Futomakis - 2 Nigiris - 6 Hosomakis"},
+	{Id: "D", Price: 9.95, Description: "16 mcx / 8 Makis - 2 Nigiris - 6 Hosomakis"},
+	{Id: "E", Price: 14.75, Description: "20 mcx / 10 Futomakis - 4 Nigiris - 6 Hosomakis"},
 }
 
 var Purchases = Orders{
