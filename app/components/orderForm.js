@@ -17,6 +17,8 @@ export function OrderForm() {
   const purchase = useFormComponent('');
   const ctx = useContext(OrderContext);
 
+  const section = useMenu(ctx.state.menu);
+
   const submit = evt => {
     evt.preventDefault();
     ctx.createOrder({ name: name.value, purchase: purchase.value });
@@ -30,23 +32,57 @@ export function OrderForm() {
           <Input type="text" {...name} name="name" placeholder="name" />
         </FormCtl>
         <FormCtl>
-          <Select style={{minWidth: '200px'}} {...purchase} inputProps={{ name: 'item', placeholder: 'item' }}>
+          <Select style={{ minWidth: '200px' }} {...purchase} inputProps={{ name: 'item', placeholder: 'item' }}>
             <MenuItem value="">none</MenuItem>
-            {/* {ctx.state.catalogue.length > 0 &&
-              ctx.state.catalogue.map(item => (
+            {section.title &&
+              section.items.length > 0 &&
+              section.items.map(item => (
                 <MenuItem key={item.id} value={item.id}>
                   {item.description} - ${item.price}
                 </MenuItem>
-              ))} */}
+              ))}
           </Select>
         </FormCtl>
         <FormCtl>
-          <Button variant="outlined" color="secondary" type="submit">place your order!</Button>
+          <Button variant="outlined" color="secondary" type="submit">
+            place your order!
+          </Button>
         </FormCtl>
       </form>
       {ctx.state.error && <div style={{ color: 'red' }}>{ctx.state.error}</div>}
     </div>
   );
+}
+
+function useMenu(menu) {
+  const sectionTitles = Object.keys(menu);
+  const [index, setIndex] = useState(0);
+
+  const title = sectionTitles[index];
+  const items = menu[title];
+
+  const next = () => {
+    if (index < sectionTitles.length) {
+      setIndex(index + 1);
+    } else {
+      setIndex(-1);
+    }
+  };
+
+  const previous = () => {
+    if (index > 0) {
+      setIndex(index - 1);
+    } else if (index < 0) {
+      setIndex(sectionTitles.length - 1);
+    }
+  };
+
+  return {
+    title,
+    items,
+    next: index > -1 ? next : null,
+    previous: index !== 0 ? previous : null,
+  };
 }
 
 function useFormComponent(initialValue) {

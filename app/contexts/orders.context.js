@@ -33,7 +33,7 @@ export function OrderProvider(props) {
     },
     {
       orders: [],
-      menu: [],
+      menu: {},
       itemsById: {},
       error: '',
     }
