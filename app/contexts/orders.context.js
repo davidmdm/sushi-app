@@ -13,11 +13,11 @@ export function OrderProvider(props) {
   const [state, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
-        case 'SET_CATALOGUE':
+        case 'SET_MENU':
           return {
             ...state,
-            catalogue: action.catalogue,
-            itemsById: action.catalogue.reduce(arrayToMapBy('id'), {}),
+            menu: action.menu,
+            itemsById: action.itemsById,
           };
         case 'SET_ORDERS':
           return {
@@ -33,7 +33,7 @@ export function OrderProvider(props) {
     },
     {
       orders: [],
-      catalogue: [],
+      menu: [],
       itemsById: {},
       error: '',
     }
@@ -60,15 +60,15 @@ export function OrderProvider(props) {
   };
 
   const fetchCatalogue = () => {
-    fetch('/catalogue')
+    fetch('/menu')
       .then(res => res.json())
-      .then(catalogue =>
+      .then(menu => {
         dispatch({
-          type: 'SET_CATALOGUE',
-          catalogue,
-          itemsById: catalogue.reduce(arrayToMapBy('id'), {}),
-        })
-      )
+          type: 'SET_MENU',
+          menu,
+          itemsById: Object.keys(menu).reduce((acc, key) => ({ ...acc, ...menu[key].reduce(arrayToMapBy('id')) }), {}),
+        });
+      })
       .catch(err => dispatch({ type: 'SET_ERROR', error: err }));
   };
 

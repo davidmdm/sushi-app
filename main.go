@@ -15,7 +15,7 @@ func main() {
 
 	http.HandleFunc("/", serveApp)
 	http.HandleFunc("/orders", orderHandler)
-	http.HandleFunc("/catalogue", serveCatalgue)
+	http.HandleFunc("/menu", serveMenu)
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
@@ -28,12 +28,12 @@ func serveApp(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, fileRoot+r.URL.Path)
 }
 
-func serveCatalgue(w http.ResponseWriter, r *http.Request) {
+func serveMenu(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	json.NewEncoder(w).Encode(datastore.Catalogue)
+	json.NewEncoder(w).Encode(datastore.Menu)
 }
 
 func orderHandler(w http.ResponseWriter, r *http.Request) {

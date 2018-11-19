@@ -32,12 +32,12 @@ export function OrderForm() {
         <FormCtl>
           <Select style={{minWidth: '200px'}} {...purchase} inputProps={{ name: 'item', placeholder: 'item' }}>
             <MenuItem value="">none</MenuItem>
-            {ctx.state.catalogue.length > 0 &&
+            {/* {ctx.state.catalogue.length > 0 &&
               ctx.state.catalogue.map(item => (
                 <MenuItem key={item.id} value={item.id}>
                   {item.description} - ${item.price}
                 </MenuItem>
-              ))}
+              ))} */}
           </Select>
         </FormCtl>
         <FormCtl>
