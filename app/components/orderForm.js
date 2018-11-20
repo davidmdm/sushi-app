@@ -26,28 +26,38 @@ export function OrderForm() {
 
   return (
     <div>
-      <h2>Place your order</h2>
+      <h2>{section.title}</h2>
       <form onSubmit={submit}>
-        <FormCtl>
-          <Input type="text" {...name} name="name" placeholder="name" />
-        </FormCtl>
-        <FormCtl>
-          <Select style={{ minWidth: '200px' }} {...purchase} inputProps={{ name: 'item', placeholder: 'item' }}>
-            <MenuItem value="">none</MenuItem>
-            {section.title &&
-              section.items.length > 0 &&
-              section.items.map(item => (
-                <MenuItem key={item.id} value={item.id}>
-                  {item.description} - ${item.price}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormCtl>
-        <FormCtl>
-          <Button variant="outlined" color="secondary" type="submit">
-            place your order!
-          </Button>
-        </FormCtl>
+        <div>
+          <FormCtl>
+            <Input type="text" {...name} name="name" placeholder="name" />
+          </FormCtl>
+          <FormCtl>
+            <Select style={{ minWidth: '200px' }} {...purchase} inputProps={{ name: 'item', placeholder: 'item' }}>
+              <MenuItem value="">none</MenuItem>
+              {section.title &&
+                section.items.map(item => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.description} - ${item.price}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormCtl>
+        </div>
+        <div>
+          <FormCtl>
+            {section.previous && (
+              <Button variant="outlined" color="secondary" onClick={section.previous}>
+                back
+              </Button>
+            )}
+            {section.next && (
+              <Button variant="outlined" color="primary" onClick={section.next}>
+                next
+              </Button>
+            )}
+          </FormCtl>
+        </div>
       </form>
       {ctx.state.error && <div style={{ color: 'red' }}>{ctx.state.error}</div>}
     </div>
