@@ -12,10 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^3.3.2",
     "assets": "^3.0.0",
-    "react": "^16.7.0-alpha.0",
-    "react-dom": "^16.7.0-alpha.0"
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -1,19 +1,61 @@
-import React, { useContext, useState } from 'react';
-
-import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
-import Button from '@material-ui/core/Button';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
+import React, { useContext, useState, useRef } from 'react';
 
 import { OrderContext } from '../contexts/orders.context';
 
-function FormCtl(props) {
-  return <FormControl style={{ margin: '30px', minWidth: '140px' }}>{props.children}</FormControl>;
+function Welcome({ update }) {
+  const inputElem = useRef(null);
+
+  const [valid, setValid] = useState();
+
+  const validateName = () => {
+    setValid(inputElem.current && inputElem.current.value.length > 3);
+  };
+
+  return (
+    <div>
+      <h2>Sushi-App Alpha</h2>
+      <p>Enter your name and lets get started!</p>
+      <input onChange={validateName} ref={inputElem} placeholder="name" />
+      {valid && (
+        <button type="button" onClick={() => update(inputElem.current.value)}>
+          Start ordering!
+        </button>
+      )}
+    </div>
+  );
+}
+
+function ItemForm({ section }) {
+  return (
+    <div>
+      <h2>{section.title}</h2>
+
+      <select>
+        <option value="">none</option>
+        {section.items &&
+          section.items.map(item => (
+            <option key={item.id} value={item.id}>
+              {item.description} - ${item.price}
+            </option>
+          ))}
+      </select>
+
+      {section.previous && (
+        <button type="button" onClick={section.previous}>
+          back
+        </button>
+      )}
+      {section.next && (
+        <button type="button" onClick={section.next}>
+          next
+        </button>
+      )}
+    </div>
+  );
 }
 
 export function OrderForm() {
-  const name = useFormComponent('');
+  const [name, setName] = useState('');
   const purchase = useFormComponent('');
   const ctx = useContext(OrderContext);
 
@@ -26,39 +68,7 @@ export function OrderForm() {
 
   return (
     <div>
-      <h2>{section.title}</h2>
-      <form onSubmit={submit}>
-        <div>
-          <FormCtl>
-            <Input type="text" {...name} name="name" placeholder="name" />
-          </FormCtl>
-          <FormCtl>
-            <Select style={{ minWidth: '200px' }} {...purchase} inputProps={{ name: 'item', placeholder: 'item' }}>
-              <MenuItem value="">none</MenuItem>
-              {section.title &&
-                section.items.map(item => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.description} - ${item.price}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormCtl>
-        </div>
-        <div>
-          <FormCtl>
-            {section.previous && (
-              <Button variant="outlined" color="secondary" onClick={section.previous}>
-                back
-              </Button>
-            )}
-            {section.next && (
-              <Button variant="outlined" color="primary" onClick={section.next}>
-                next
-              </Button>
-            )}
-          </FormCtl>
-        </div>
-      </form>
+      <form onSubmit={submit}>{!name ? <Welcome update={setName} /> : <ItemForm section={section} />}</form>
       {ctx.state.error && <div style={{ color: 'red' }}>{ctx.state.error}</div>}
     </div>
   );
@@ -66,13 +76,18 @@ export function OrderForm() {
 
 function useMenu(menu) {
   const sectionTitles = Object.keys(menu);
+
+  if (sectionTitles.length === 0) {
+    return {};
+  }
+
   const [index, setIndex] = useState(0);
 
   const title = sectionTitles[index];
   const items = menu[title];
 
   const next = () => {
-    if (index < sectionTitles.length) {
+    if (index < sectionTitles.length - 1) {
       setIndex(index + 1);
     } else {
       setIndex(-1);

@@ -12,7 +12,6 @@ export const Application = () => (
     <div id="order-panel">
       <OrderProvider>
         <OrderForm />
-        <OrderList />
       </OrderProvider>
     </div>
   </div>
