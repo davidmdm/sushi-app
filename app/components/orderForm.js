@@ -2,10 +2,13 @@ import React, { useContext, useState, useRef } from 'react';
 
 import { OrderContext } from '../contexts/orders.context';
 
+function Cell(props) {
+  return <td className="item_cell">{props.children}</td>;
+}
+
 function Welcome({ update }) {
   const inputElem = useRef(null);
-
-  const [valid, setValid] = useState();
+  const [valid, setValid] = useState(false);
 
   const validateName = () => {
     setValid(inputElem.current && inputElem.current.value.length > 3);
@@ -25,28 +28,38 @@ function Welcome({ update }) {
   );
 }
 
-function ItemForm({ section }) {
+function MenuSection({ section, updateOrder, order }) {
   return (
     <div>
       <h2>{section.title}</h2>
 
-      <select>
-        <option value="">none</option>
-        {section.items &&
-          section.items.map(item => (
-            <option key={item.id} value={item.id}>
-              {item.description} - ${item.price}
-            </option>
-          ))}
-      </select>
+      <table>
+        <tbody className="section_menu">
+          {(section.items &&
+            section.items.map(item => (
+              <tr key={item.id}>
+                <Cell>{item.id}</Cell>
+                <Cell>{item.description}</Cell>
+                <Cell>${item.price}</Cell>
+                <Cell>
+                  <input onChange={e => updateOrder(item.id, e.target.value)} type="number" />
+                </Cell>
+              </tr>
+            ))) || <div>{JSON.stringify(order)}</div>}
+        </tbody>
+      </table>
 
       {section.previous && (
-        <button type="button" onClick={section.previous}>
+        <button type="button" style={{ float: 'left', color: 'darkred' }} onClick={section.previous}>
           back
         </button>
       )}
       {section.next && (
-        <button type="button" onClick={section.next}>
+        <button
+          type="button"
+          style={{ float: 'right', color: 'darkgreen', marginRight: '50px' }}
+          onClick={section.next}
+        >
           next
         </button>
       )}
@@ -56,20 +69,31 @@ function ItemForm({ section }) {
 
 export function OrderForm() {
   const [name, setName] = useState('');
-  const purchase = useFormComponent('');
+  const [purchase, setPurchase] = useState('');
+  const [order, setOrder] = useState({});
+
+  const updateOrder = (id, qty) => {
+    setOrder({ ...order, [id]: qty });
+  };
+
   const ctx = useContext(OrderContext);
 
   const section = useMenu(ctx.state.menu);
 
   const submit = evt => {
     evt.preventDefault();
-    ctx.createOrder({ name: name.value, purchase: purchase.value });
+    ctx.createOrder({ name: name, purchase: purchase });
   };
 
   return (
     <div>
-      <form onSubmit={submit}>{!name ? <Welcome update={setName} /> : <ItemForm section={section} />}</form>
-      {ctx.state.error && <div style={{ color: 'red' }}>{ctx.state.error}</div>}
+      <form onSubmit={submit}>
+        {name ? (
+          <Welcome update={setName} />
+        ) : (
+          <MenuSection section={section} order={order} updateOrder={updateOrder} />
+        )}
+      </form>
     </div>
   );
 }
@@ -107,13 +131,5 @@ function useMenu(menu) {
     items,
     next: index > -1 ? next : null,
     previous: index !== 0 ? previous : null,
-  };
-}
-
-function useFormComponent(initialValue) {
-  const [value, setValue] = useState(initialValue);
-  return {
-    value,
-    onChange: evt => setValue(evt.target.value),
   };
 }
